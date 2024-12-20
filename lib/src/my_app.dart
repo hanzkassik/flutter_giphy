@@ -7,7 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Buscador giphy',
+      title: 'Buscador Gphy',
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       theme: ThemeData(hintColor: Colors.white),
