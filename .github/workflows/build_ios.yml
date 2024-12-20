@@ -1,0 +1,37 @@
+name: Flutter Build iOS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.0'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build IPA (para iOS)
+      env:
+        FLUTTER_BUILD_MODE: release
+        CI: true
+      run: flutter build ipa --release
+
+    - name: Upload IPA as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: upload-ipa-file
+        path: build/ios/ipa/*.ipa
