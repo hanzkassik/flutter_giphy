@@ -14,48 +14,52 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # - name: Set up Flutter
-    #   uses: subosito/flutter-action@v2
-    #   with:
-    #     flutter-version: '3.22.0'
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.0'
 
-    # - name: Install dependencies
-    #   run: flutter pub get
+    - name: Install dependencies
+      run: flutter pub get
 
-    - name: Pegar caminho
-      run: pwd
+    # - name: Pegar caminho
+    #   run: pwd
 
-    - name: Criar arquivo
-      run: echo "$TESTE" | base64 --decode > android/app/teste.txt
+    # - name: Criar arquivo
+    #   run: echo "$TESTE" | base64 --decode > android/app/teste.txt
+    #   env: 
+    #     TESTE: ${{ secrets.TESTE }} 
+      
+    # - name: Ler arquivo
+    #   run: cat android/app/teste.txt
+
+    - name: Decode keystore from secret
+      run: |
+        echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
       env: 
-        TESTE: ${{ secrets.TESTE }} 
-      
-    - name: Ler arquivo
-      run: cat android/app/teste.txt
-
-    # - name: Decode keystore from secret
-    #   run: |
-    #     echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+        KEYSTORE: ${{ secrets.KEYSTORE }} 
     
-    # - name: Decode key properties
-    #   run: |
-    #     echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
+    - name: Decode key properties
+      run: |
+        echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
+      env: 
+        KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES }} 
 
-    # - name: Build APK (para Android)
-    #   run: flutter build apk --release 
+    - name: Build APK (para Android)
+      run: flutter build apk --release 
       
-    # - name: Build appbundle (para Android)
-    #   run: flutter build appbundle --release 
+    - name: Build appbundle (para Android)
+      run: flutter build appbundle --release 
 
-    # - name: Upload APK as an artifact
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: upload-apk-file
-    #     path: build/app/outputs/flutter-apk/app-release.apk 
+    - name: Upload APK as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: upload-apk-file
+        path: build/app/outputs/flutter-apk/app-release.apk 
     
-    # - name: Upload appbundle as an artifact
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: upload-appbundle-file
-    #     path: build/app/outputs/bundle/release/app-release.aab 
+    - name: Upload appbundle as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: upload-appbundle-file
+        path: build/app/outputs/bundle/release/app-release.aab 
 
