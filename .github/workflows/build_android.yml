@@ -22,29 +22,34 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Decode keystore from secret
-      run: |
-        echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
-    
-    - name: Decode key properties
-      run: |
-        echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
+    - name: Teste
+      run: pwd
+      run: echo "$TESTE" | base64 --decode > android/app/teste.txt
+      run: cat android/app/teste.txt
 
-    - name: Build APK (para Android)
-      run: flutter build apk --release 
+    # - name: Decode keystore from secret
+    #   run: |
+    #     echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+    
+    # - name: Decode key properties
+    #   run: |
+    #     echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
+
+    # - name: Build APK (para Android)
+    #   run: flutter build apk --release 
       
-    - name: Build appbundle (para Android)
-      run: flutter build appbundle --release 
+    # - name: Build appbundle (para Android)
+    #   run: flutter build appbundle --release 
 
-    - name: Upload APK as an artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: upload-apk-file
-        path: build/app/outputs/flutter-apk/app-release.apk 
+    # - name: Upload APK as an artifact
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: upload-apk-file
+    #     path: build/app/outputs/flutter-apk/app-release.apk 
     
-    - name: Upload appbundle as an artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: upload-appbundle-file
-        path: build/app/outputs/bundle/release/app-release.aab 
+    # - name: Upload appbundle as an artifact
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: upload-appbundle-file
+    #     path: build/app/outputs/bundle/release/app-release.aab 
 
