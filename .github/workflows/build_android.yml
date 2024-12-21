@@ -22,9 +22,13 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Teste
+    - name: Pegar caminho
       run: pwd
-      run: echo "$TESTE" | base64 --decode > android/app/teste.txt
+
+    - name: Criar arquivo
+      run: echo "$KEY_PROPERTIES" | base64 --decode > android/app/teste.txt
+      
+    - name: Ler arquivo
       run: cat android/app/teste.txt
 
     # - name: Decode keystore from secret
