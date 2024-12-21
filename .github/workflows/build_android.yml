@@ -14,19 +14,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.0'
+    # - name: Set up Flutter
+    #   uses: subosito/flutter-action@v2
+    #   with:
+    #     flutter-version: '3.22.0'
 
-    - name: Install dependencies
-      run: flutter pub get
+    # - name: Install dependencies
+    #   run: flutter pub get
 
     - name: Pegar caminho
       run: pwd
 
     - name: Criar arquivo
-      run: echo "$KEY_PROPERTIES" | base64 --decode > android/app/teste.txt
+      run: echo "$TESTE" | base64 --decode > android/app/teste.txt
+      env: 
+        TESTE: ${{ secrets.TESTE }} 
       
     - name: Ler arquivo
       run: cat android/app/teste.txt
