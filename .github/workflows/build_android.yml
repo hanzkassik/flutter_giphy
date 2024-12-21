@@ -35,7 +35,7 @@ jobs:
 
     - name: Decode keystore from secret
       run: |
-        echo "$KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
+        echo "$KEYSTORE" | base64 --decode > android/app/giphy-keystore.jks
       env: 
         KEYSTORE: ${{ secrets.KEYSTORE }} 
     
