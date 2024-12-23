@@ -1,6 +1,6 @@
 name: Flutter Build iOS
 
-'on':
+on:
   push:
     branches:
       - main
@@ -53,10 +53,6 @@ jobs:
           echo "${{ secrets.IOS_CERTIFICATE }}" | base64 --decode > certificate.p12
           security import certificate.p12 -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
           rm certificate.p12
-        env:
-        IOS_PROVISIONING_PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE }}
-        IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
-        IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
 
       - name: Verificar Configuração
         run: security find-identity -p codesigning -v
