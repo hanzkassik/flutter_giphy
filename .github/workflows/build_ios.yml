@@ -15,18 +15,23 @@ jobs:
     environment: PROD
 
     steps:
-    - name: Checkout repository
+    - name: Fazer checkout do repositório
       uses: actions/checkout@v3
 
-    - name: Set up Flutter
+    - name: Configurar Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
 
-    - name: Install dependencies
+    - name: Configurar Xcode
+      run: |
+        sudo xcode-select --switch /Applications/Xcode.app
+        sudo xcodebuild -runFirstLaunch
+
+    - name: Instalar dependências
       run: flutter pub get
 
-    - name: Build app
+    - name: Gerar build do app
       env:
         CI: true
       run: flutter build ios --release
