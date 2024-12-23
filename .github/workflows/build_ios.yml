@@ -1,6 +1,6 @@
 name: Flutter Build iOS
 
-on:
+'on':
   push:
     branches:
       - main
@@ -15,23 +15,53 @@ jobs:
     environment: PROD
 
     steps:
-    - name: Fazer checkout do repositório
-      uses: actions/checkout@v3
+      - name: Fazer checkout do repositório
+        uses: actions/checkout@v3
 
-    - name: Configurar Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.0'
+      - name: Verificar secrets
+        run: |
+          if [ -z "${{ secrets.IOS_PROVISIONING_PROFILE }}" ]; then
+            echo "IOS_PROVISIONING_PROFILE não está configurado"
+            exit 1
+          fi
+          if [ -z "${{ secrets.IOS_CERTIFICATE }}" ]; then
+            echo "IOS_CERTIFICATE não está configurado"
+            exit 1
+          fi
+          if [ -z "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" ]; then
+            echo "IOS_CERTIFICATE_PASSWORD não está configurado"
+            exit 1
+          fi
 
-    - name: Configurar Xcode
-      run: |
-        sudo xcode-select --switch /Applications/Xcode.app
-        sudo xcodebuild -runFirstLaunch
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.22.0
 
-    - name: Instalar dependências
-      run: flutter pub get
+      - name: Configurar Xcode
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app
+          sudo xcodebuild -runFirstLaunch
 
-    - name: Gerar build do app
-      env:
-        CI: true
-      run: flutter build ios --release
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Configurar Certificados e Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE }}" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/ProvisioningProfile.mobileprovision
+          echo "${{ secrets.IOS_CERTIFICATE }}" | base64 --decode > certificate.p12
+          security import certificate.p12 -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
+          rm certificate.p12
+        env:
+        IOS_PROVISIONING_PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE }}
+        IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
+        IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+
+      - name: Verificar Configuração
+        run: security find-identity -p codesigning -v
+
+      - name: Gerar build do app
+        env:
+          CI: true
+        run: flutter build ios --release
