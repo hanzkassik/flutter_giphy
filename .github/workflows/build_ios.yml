@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    environment: PROD
 
     steps:
     - name: Checkout repository
@@ -24,14 +25,7 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Build IPA (para iOS)
+    - name: Build app
       env:
-        FLUTTER_BUILD_MODE: release
         CI: true
-      run: flutter build ipa --release
-
-    - name: Upload IPA as an artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: upload-ipa-file
-        path: build/ios/ipa/*.ipa
+      run: flutter build ios --release
