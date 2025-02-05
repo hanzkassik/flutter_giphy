@@ -1,4 +1,4 @@
-name: Flutter Build
+name: Flutter Build & Deploy
 
 on:
   pull_request:
@@ -22,32 +22,19 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    # - name: Pegar caminho
-    #   run: pwd
-
-    # - name: Criar arquivo
-    #   run: echo "$TESTE" | base64 --decode > android/app/teste.txt
-    #   env: 
-    #     TESTE: ${{ secrets.TESTE }} 
-      
-    # - name: Ler arquivo
-    #   run: cat android/app/teste.txt
-
     - name: Decode keystore from secret
-      run: |
-        echo "$KEYSTORE" | base64 --decode > android/app/giphy-keystore.jks
+      run: echo "$KEYSTORE" | base64 --decode > android/app/giphy-keystore.jks
       env: 
         KEYSTORE: ${{ secrets.KEYSTORE }} 
     
     - name: Decode key properties
-      run: |
-        echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
+      run: echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties
       env: 
         KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES }} 
 
     - name: Build APK (para Android)
       run: flutter build apk --release 
-      
+    
     - name: Build appbundle (para Android)
       run: flutter build appbundle --release 
 
@@ -63,3 +50,13 @@ jobs:
         name: upload-appbundle-file
         path: build/app/outputs/bundle/release/app-release.aab 
 
+    - name: Upload para Google Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJson: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+        packageName: "com.seuapp.android"
+        releaseFiles: "build/app/outputs/bundle/release/app-release.aab"
+        track: internal  # Pode ser internal, alpha, beta ou production
+        status: completed
+      env:
+        PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
